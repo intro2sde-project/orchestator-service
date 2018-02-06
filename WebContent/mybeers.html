@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Intro2sde</title>
+
+<!-- Bootstrap core CSS -->
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+	integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+	crossorigin="anonymous">
+	
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
+
+<!-- Custom styles for this template -->
+<link href="jumbotron.css" rel="stylesheet">
+
+</head>
+<body ng-app="myapp" ng-controller="myappCtrl">
+	<main role="main">
+	<header  >
+		logged as: <a href="login.html"><b>{{ttusername}} </b></a>
+		
+---------
+<a href="index.html" style="{align:right}"><b>home </b></a>
+		</header>	
+	
+	<div class="jumbotron" ng-controller="myappCtrl">
+        <div class="container">
+          <h1>{{ttusername}}'s Beers</h1>
+          <h2>The best choice</h2>
+          
+          <h4>"{{quotee.quote}}" <small>{{quotee.author}}</small></h4>
+        </div>
+      </div>
+
+	<div class="container" >	
+		
+		<br/>
+		<br/>
+		<br/>
+		
+		<!-- columns -->
+		<div class="row" >
+			<div class="col-md-6" ng-repeat="beer in beers">
+			<div class="card">			  
+			  <div class="card-body">
+				<div class="card-body">
+				<h5 >{{beer.name}}</h5>
+				<p>Color: {{beer.color}}</p>
+				<p>Type: {{beer.type}}</p>
+				<p>Taste: {{beer.country}}</p>
+				<p>Id: {{beer.idBeer}}</p>
+			    <a ng-href="beerdetails.html?name={{beer.name}}&id={{beer.idBeer}}" class="btn btn-primary">Get more details...</a>
+			  </div>
+			</div>
+			</div>
+		</div>
+
+	<footer class="container">
+		<p>&copy; Introduction to Service Design 2017/2018</p>
+	</footer>
+
+	<!-- Bootstrap core JavaScript
+    ================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script src="script.js"></script>
+	<script>
+
+
+		var app = angular.module('myapp', ['ngRoute']);	
+		app.controller('myappCtrl', function($scope, $http, $location) {
+			
+			$scope.ttusername = gUsername;
+			var ggPassword = gPassword;
+			var path = 'rest/orch/beer/' + gUsername + '/wl';
+	    	$http.get(path,
+	    			  { params: { 
+	    				  } 
+	    		})
+	    		.then(function(response) {
+	       		$scope.beers = response.data;
+	    	});
+	    	
+	    	 var pathh = 'rest/orch/quotesDrink';
+			    $http.get(pathh,
+		    			  { params: { 
+		    				  } 
+		    		})
+		    		.then(function(response) {
+		    		$scope.quotee = response.data; 
+		    	});
+				
+	
+		});
+	</script>
+</body>
+</html>

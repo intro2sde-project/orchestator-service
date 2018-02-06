@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Introsde</title>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
+	
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Custom styles for this template -->
+    <link href="jumbotron.css" rel="stylesheet">
+
+</head>
+<body >
+
+	<div class="jumbotron">
+	          <h1>Login</h1>
+	          <h2>Welcome </h2>
+	        </div>
+	      </div>
+	<div class="container">
+	
+	<div class="row" ng-app="myapp" ng-controller="myappCtrl">
+		<div class="col-md-offset-1 col-md-10">
+			<form>
+			  <div class="form-group">
+			    <label for="exampleInputEmail1">Username</label>
+			    <input type="text" ng-model="username" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter username">
+			  </div>
+			  <div class="form-group">
+			    <label for="exampleInputPassword1">Password</label>
+			    <input type="password" ng-model="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+			  </div>
+			  <div class="alert alert-dark" role="alert" style="visibility:hidden" id="eiii">
+				  Eiii! username or password are wrong!
+				</div>	
+			  <button ng-click="performLogin()" class="btn btn-primary">Submit</button>
+			</form>
+		</div>
+	</div>
+	<div class="row">
+	<div class="col-md-offset-1 col-md-10">
+	
+	<br/>
+	<br/>
+            <p>Not registered?  </p>
+            <p><a class="btn btn-secondary" href="register.html" role="button">Enjoy us &raquo;</a></p>
+            </div>
+     </div>
+</div>
+<!-- Bootstrap core JavaScript
+    ================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script src="script.js"></script>
+	<script>
+
+	var app = angular.module('myapp', ['ngRoute']);	
+	app.controller('myappCtrl', function($scope, $http) {
+
+		$scope.performLogin = function(){
+
+			var path = 'rest/orch/login';
+
+			$http.get(path,
+	    			  { params: { 
+	    				  username: $scope.username,
+	    				  password: $scope.password 
+	    			  }
+	    		})
+	    		.then(function(response) {
+	    			console.log(response.data);
+	       		if(response.data+'' != ''){
+	       			localStorage.setItem("username", $scope.username);
+	       			localStorage.setItem("password", $scope.password);
+    	    		window.location = "index.html";
+	       		} else {
+	       			document.getElementById("eiii").style.visibility = "visible"; 
+	       		}
+	       		
+	    	});
+		};
+		
+	});
+	</script>
+</body>
+</html>

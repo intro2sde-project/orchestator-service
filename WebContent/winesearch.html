@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Intro2sde</title>
+
+<!-- Bootstrap core CSS -->
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+	integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+	crossorigin="anonymous">
+	
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
+
+<!-- Custom styles for this template -->
+<link href="jumbotron.css" rel="stylesheet">
+
+</head>
+<body ng-app="myapp" >
+	<main role="main">
+			<header  ng-controller="myappCtrl">
+		logged as: <a href="login.html"><b>{{ttusername}} </b></a>
+---------
+<a href="index.html" style="{align:right}"><b>home </b></a>
+		</header>	
+	
+	<div class="jumbotron" ng-controller="myappCtrl">
+        <div class="container">
+          <h1>Wine Research</h1>
+          <h2>Use the form to perform a research</h2>
+          
+          <h4>"{{quotee.quote}}" <small>{{quotee.author}}</small></h4>
+        </div>
+      </div>
+
+	<div class="container" ng-controller="myappCtrl">
+
+		<!-- Searching row of columns -->
+		<div class="row">
+			<div class="col-md-12">
+				<form >
+					<div class="form-row">
+						<div class="form-group col-md-12">
+							<label for="form.search">Search: </label> 
+							<input type="text"class="form-control" id="form.search" placeholder="Chianti Tuscany" name="search" ng-model="search">
+						</div>
+					</div>
+
+					<div class="form-row">
+						<div class="form-group col-md-6">
+							<label for="form.country">Country: </label>
+							<input type="text" class="form-control" id="form.country" placeholder="italy, france, japan" name="country" ng-model="country">
+						</div>
+						<div class="form-group col-md-6">
+							<label for="form.type">Type: </label> 
+							<input type="text"class="form-control" id="form.type" placeholder="wine, spirits, table, dessert, sparkling, fruit, cider, sake" ng-model="type" name="type">
+						</div>
+					</div>
+					
+					<div class="form-row">
+						<div class="form-group col-md-6">
+							<label for="form.range">Max Price: {{price}} $</label>
+							<input type="range" class="form-control" id="form.price" min="1" max="10000" ng-model="price" name="price">
+						</div>
+						
+						<div class="form-group col-md-6">
+							<label for="form.type">Color: </label> 
+							<input type="text"class="form-control" id="form.color" placeholder="red, white" ng-model="color" name="color">
+						</div>
+					</div>
+					
+					<Button class="btn btn-secondary" role="button" ng-click="performSearching()">Search &raquo;</Button>
+				</form>
+			</div>
+		</div>
+		
+		<br/>
+		<br/>
+		<br/>
+		
+		<!-- columns -->
+		<div class="row" >
+			<div class="col-md-6" ng-repeat="wine in wines">
+			<div class="card">			  
+				<img src="{{wine.image}}" class="rounded mx-auto d-block"></img>
+			  <div class="card-body">
+				<h5 >{{wine.name}}</h5>
+				<p>Code: {{wine.code}}</p>
+				<p>Region: {{wine.region}}</p>
+				<p>Winery: {{wine.winery}}</p>
+				<p>Varietal: {{wine.varietal}}</p>
+				<p>Price: {{wine.price}}</p>
+			    <a ng-href="winedetails.html?code={{wine.code}}" class="btn btn-primary">Get more details...</a>
+			  </div>
+			</div>
+			</div>
+		</div>
+
+	<footer class="container">
+		<p>&copy; Introduction to Service Design 2017/2018</p>
+	</footer>
+
+	<!-- Bootstrap core JavaScript
+    ================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script src="script.js"></script>
+	<script>
+
+
+		var app = angular.module('myapp', ['ngRoute']);	
+		app.controller('myappCtrl', function($scope, $http, $location) {
+			
+			$scope.price = "100";
+			$scope.rating= "4";
+
+			$scope.ttusername = gUsername;
+			
+			
+			  var pathhh = 'rest/orch/quotesDrink';
+		      $http.get(pathhh,
+	    			  { params: { 
+	    				  } 
+	    		})
+	    		.then(function(response) {
+	    		$scope.quotee = response.data; 
+	    	  });
+				
+			$scope.performSearching = function(){
+				var path = 'rest/orch/wine/' + gUsername + '/search';
+		    	$http.get(path,
+		    			  { params: { 
+		    				  search: $scope.search,
+		    				  type: $scope.type,
+		    				  country: $scope.country,
+		    				  maxprice: $scope.maxprice,
+		    				  color: $scope.color
+		    				  } 
+		    		})
+		    		.then(function(response) {
+		       		$scope.wines = response.data;
+		    	});
+			};
+	
+			
+		});
+	</script>
+</body>
+</html>

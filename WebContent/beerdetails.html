@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Intro2sde</title>
+
+<!-- Bootstrap core CSS -->
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+	integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+	crossorigin="anonymous">
+	
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
+
+<!-- Custom styles for this template -->
+<link href="jumbotron.css" rel="stylesheet">
+
+</head>
+<body   ng-app="myapp">
+		
+<header  ng-controller="myappCtrl">
+logged as: <a href="login.html"><b>{{ttusername}} </b></a>
+---------
+<a href="index.html" style="{align:right}"><b>home </b></a>
+</header>	
+        <div class="container"  ng-controller="myappCtrl">
+          <div class="row" >
+			<div class="col-md-10 col-offset-1" >
+			<h5 >{{beer.name}}</h5>
+			<p>Color: {{beer.color}}</p>
+			<p>Type: {{beer.type}}</p>
+			<p>Taste: {{beer.country}}</p>
+			<p>Your rating: {{rating}}</p>				
+			</div>
+        </div>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+         <div class="row"  ng-controller="myappCtrl2">
+			<div class="col-md-10 col-offset-1" >
+			<h2> Give it a rating </h2>
+			   <form id="forma">
+				  <div class="form-row">
+						<div class="form-group col-md-10 col-md-offset-1">
+							<label for="form.range">Rating: {{ratingDato}} </label>
+							<input type="range" class="form-control" id="form.price" min="1" max="5" ng-model="ratingDato" name="rating">
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="form-check">
+						    <input type="checkbox" class="form-check-input" id="isWish">
+						    <label class="form-check-label" ng-model="isWish" for="isWish">Add to your Beer Wishlist</label>
+						  </div>
+					</div>
+				<Button class="btn btn-secondary" role="button" ng-click="rateit()">Done &raquo;</Button>			
+				</form> 	
+			</div>
+        </div>
+         <div class="alert alert-dark" role="alert" style="visibility:hidden" id="eiii">
+			Rating added/changed 
+		</div>	
+		<div class="alert alert-dark" role="alert" style="visibility:hidden" id="eiii2">
+			Added to your wishlist
+		</div>		
+		<div class="alert alert-dark" role="alert" style="visibility:hidden" id="eiii3">
+			Remove to your wishlist
+		</div>
+      </div>
+
+
+	<footer class="container">
+		<p>&copy; Introduction to Service Design 2017/2018</p>
+	</footer>
+
+	<!-- Bootstrap core JavaScript
+    ================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script src="script.js"></script>
+	<script>
+					
+		var app = angular.module('myapp', ['ngRoute']);	
+		
+		app.controller('myappCtrl', function( $scope, $http, $location) {
+			$scope.ttusername = gUsername;
+			
+			var url_string = window.location.href;
+			var url = new URL(url_string);
+			var codee = url.searchParams.get("name");
+			var pathh = 'rest/orch/beer/' + gUsername + '/search/'+codee;
+	    	$http.get(pathh,
+	    			  { params: { 
+	    				  } 
+	    		})
+	    		.then(function(response) {
+	       		$scope.beer = response.data;
+	    	});
+			console.log("1");
+			var id = url.searchParams.get("id");
+			
+			var pathh = 'rest/orch/beer/' + gUsername + '/getrate/'+id;
+	    	$http.get(pathh,
+	    			  { params: { 
+	    				  cane : 'cane'
+	    				  } 
+	    		})
+	    		.then(function(response) {
+	       		$scope.rating = response.data;
+	    	});
+
+			console.log("2");
+		});
+		
+		app.controller('myappCtrl2', function($scope, $http, $location) {
+			
+			$scope.ttusername = gUsername;
+			
+			var url_string = window.location.href;
+			var url = new URL(url_string);
+			var name = url.searchParams.get("name");
+			var id = url.searchParams.get("id");
+			var pathRate = 'rest/orch/beer/' + gUsername + '/beer/rate/' + id;
+			var pathWish = 'rest/orch/beer/' + gUsername + '/addwl/' + id;
+			var pathWishNo = 'rest/orch/beer/' + gUsername + '/removewl/' + id;
+			
+			console.log('sad ');
+			
+			$scope.rateit = function(){
+				
+				var isWishChecked = document.getElementById('isWish').checked ? true : false;
+	
+	       		console.log(isWishChecked);
+	       		
+				$http.get(pathRate,
+		    			  { params: { 
+		    				 rating: $scope.ratingDato
+		    				  } 
+		    		})
+		    		.then(function(response) {
+		    			document.getElementById("eiii").style.visibility = "visible"; 
+		    	});
+				
+				if(isWishChecked){
+					$http.get(pathWish,
+			    			  { params: { 
+			    				  } 
+			    		})
+			    		.then(function(response) {
+			    			document.getElementById("eiii2").style.visibility = "visible"; 
+			    	});
+				}else{
+					$http.get(pathWishNo,
+			    			  { params: { 
+			    				  } 
+			    		})
+			    		.then(function(response) {
+
+			    			document.getElementById("eiii3").style.visibility = "visible"; 
+			    	});
+				}
+			}
+	    	
+		});
+	</script>
+</body>
+</html>

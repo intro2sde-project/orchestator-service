@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Intro2sde</title>
+
+<!-- Bootstrap core CSS -->
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+	integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+	crossorigin="anonymous">
+	
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
+
+<!-- Custom styles for this template -->
+<link href="jumbotron.css" rel="stylesheet">
+
+</head>
+<body   ng-app="myapp">
+		
+<header  ng-controller="myappCtrl">
+logged as: <a href="login.html"><b>{{ttusername}} </b></a>
+
+---------
+<a href="index.html" style="{align:right}"><b>home </b></a>
+</header>	
+        <div class="container">
+          <div class="row"  ng-controller="myappCtrl">
+			<div class="col-md-10 col-offset-1" >
+			<img src="{{wine.image}}" class="rounded mx-auto d-block"></img>
+			<h5 >{{wine.name}}</h5>
+			<p>Code: {{wine.code}}</p>
+			<p>Region: {{wine.region}}</p>
+			<p>Winery: {{wine.winery}}</p>
+			<p>Varietal: {{wine.varietal}}</p>
+			<p>Type: {{wine.type}}</p>
+			<p>Alcohol: {{wine.alcohol}}</p>
+			<p>Price: {{wine.price}}</p>			
+			<p>Your rating: {{wine.rating}}</p>	
+			<p>Your review: {{wine.review}}</p>
+		    <a ng-href="{{wine.link}}" class="btn btn-primary">Go to Snooth link &raquo</a>
+			
+			</div>
+        </div>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+         <div class="row"  ng-controller="myappCtrl2">
+			<div class="col-md-10 col-offset-1" >
+			<h2> Make a Review </h2>
+			   <form id="forma">
+				  <div class="form-row">
+						<div class="form-group col-md-10 col-md-offset-1">
+							<label for="form.range">Rating: {{rating/2}} $</label>
+							<input type="range" class="form-control" id="form.price" min="1" max="10" ng-model="rating" name="rating">
+						</div>
+					</div>
+					 <div class="form-row">
+						<div class="form-group col-md-10 col-md-offset-1">
+							<label for="form.type">Place your opinions here: </label> 
+							<textarea type="text"class="form-control" id="form.body" placeholder="I like pizza" ng-model="body" name="body"></textarea>
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="form-check">
+						    <input type="checkbox" class="form-check-input" id="isWish">
+						    <label class="form-check-label" ng-model="isWish" for="isWish">Add to your Wine Wishlist</label>
+						  </div>
+					</div>
+				<Button class="btn btn-secondary" role="button" ng-click="rateit()">Done &raquo;</Button>			
+				</form> 	
+			</div>
+        </div>
+      </div>
+
+
+	<footer class="container">
+		<p>&copy; Introduction to Service Design 2017/2018</p>
+	</footer>
+
+	<!-- Bootstrap core JavaScript
+    ================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script src="script.js"></script>
+	<script>
+					
+		var app = angular.module('myapp', ['ngRoute']);	
+		
+		app.controller('myappCtrl', function( $scope, $http, $location) {
+			$scope.ttusername = gUsername;
+			var pathh = 'rest/orch/wine/' + gUsername + '/details';
+			var url_string = window.location.href;
+			var url = new URL(url_string);
+			var codee = url.searchParams.get("code");
+	    	$http.get(pathh,
+	    			  { params: { 
+	    				 code: codee  ,
+	    				 food: '1'
+	    				  } 
+	    		})
+	    		.then(function(response) {
+	       		$scope.wine = response.data;
+	    	});
+		});
+		
+		app.controller('myappCtrl2', function($scope, $http, $location) {
+			
+			var pathh = 'rest/orch/wine/' + gUsername + '/rate';
+			
+			var url_string = window.location.href;
+			var url = new URL(url_string);
+			var codee = url.searchParams.get("code");
+			var ggPassword = gPassword;
+			console.log('sad ');
+			
+			$scope.rateit = function(){
+				
+				var isWishChecked = document.getElementById('isWish').checked ? 1 : 0;
+	
+	       		console.log(isWishChecked);
+	       		
+					$http.get(pathh,
+			    			  { params: { 
+			    				 code: codee  ,
+			    				 password: gPassword,
+			    				 review: $scope.body,
+			    				 rating: $scope.rating/2,
+			    				 isWish: isWishChecked
+			    				  } 
+			    		})
+			    		.then(function(response) {
+			       			var form = document.getElementById('forma');
+			       			form.innerHTML = "<div><p>rating: "+ $scope.rating/2 +"</p><p>review: " + $scope.body+"</p><p>In wishlist:" + isWishChecked +"</p></div>";
+			    	});
+			}
+	    	
+		});
+	</script>
+</body>
+</html>
